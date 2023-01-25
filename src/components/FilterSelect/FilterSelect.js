@@ -12,10 +12,10 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export function FilterSelect({ onPriceFilter, onRatingFilter, onTypeFilter }) {
+export function FilterSelect() {
     const classes = useStyles();
-    const [price, setPrice] = React.useState('');
-    const [rating, setRating] = React.useState('');
+    const [price, setPrice] = React.useState(0);
+    const [rating, setRating] = React.useState(0);
     const [type, setType] = React.useState('');
     const [selectedValue, setSelectedValue] = React.useState('')
 
@@ -23,21 +23,26 @@ export function FilterSelect({ onPriceFilter, onRatingFilter, onTypeFilter }) {
 
     const handlePriceChange = (event) => {
         setPrice(event.target.value);
-        onPriceFilter(event.target.value);
     };
 
     const handleRatingChange = (event) => {
         setRating(event.target.value);
-        onRatingFilter(event.target.value);
     };
 
     const handleTypeChange = (event) => {
         setType(event.target.value);
-        onTypeFilter(event.target.value);
     };
 
     const onFind = () => {
-        dispatch(courseActions.titleFilter({selectedValue}))
+        dispatch(courseActions.filterCourse({selectedValue, rating, price, type}))
+    }
+
+    const clearFilteredCourses = () => {
+        dispatch(courseActions.clearFilteredCourses())
+        setPrice(0)
+        setRating(0)
+        setType('')
+        setSelectedValue('')
     }
 
     return (
@@ -46,6 +51,7 @@ export function FilterSelect({ onPriceFilter, onRatingFilter, onTypeFilter }) {
                 freeSolo
                 id="free-solo-2-demo"
                 disableClearable
+                value={selectedValue}
                 options={KUAMCourses.map((option) => option.title)}
                 onChange={(event, value) => setSelectedValue(value)}
                 renderInput={(params) => (
@@ -74,7 +80,7 @@ export function FilterSelect({ onPriceFilter, onRatingFilter, onTypeFilter }) {
                             <MenuItem value="">
                                 <em>None</em>
                             </MenuItem>
-                            <MenuItem value="free">Бесплатные</MenuItem>
+                            <MenuItem value={0}>Бесплатные</MenuItem>
                             <MenuItem value={10}>$10 и меньше</MenuItem>
                             <MenuItem value={20}>$20 и меньше</MenuItem>
                             <MenuItem value={30}>$30 и меньше</MenuItem>
@@ -107,18 +113,32 @@ export function FilterSelect({ onPriceFilter, onRatingFilter, onTypeFilter }) {
                             <MenuItem value="">
                                 <em>None</em>
                             </MenuItem>
-                            <MenuItem value="online">Онлайн</MenuItem>
-                            <MenuItem value="onsite">Локальные</MenuItem>
-                            <MenuItem value="hybrid">Гибридные</MenuItem>
+                            <MenuItem value="дизайн">Дизайн</MenuItem>
+                            <MenuItem value="обучение">Обучение</MenuItem>
+                            <MenuItem value="экономика">Экономика</MenuItem>
+                            <MenuItem value="спорт">Спорт</MenuItem>
+                            <MenuItem value="маркетинг">Маркетинг</MenuItem>
+                            <MenuItem value="геология">Геология</MenuItem>
+                            <MenuItem value="право">Право</MenuItem>
+                            <MenuItem value="английский язык">Английский язык</MenuItem>
                         </Select>
                     </FormControl>
                 </div>
-                <Button
-                    variant="contained"
-                    onClick={() => onFind()}
-                >
-                    Поиск
-                </Button>
+                <div>
+                    <Button
+                        variant={"outlined"}
+                        style={{marginRight: 20}}
+                        onClick={() => clearFilteredCourses()}
+                    >
+                        Очистить фильтры
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => onFind()}
+                    >
+                        Поиск
+                    </Button>
+                </div>
             </div>
         </div>
     );
